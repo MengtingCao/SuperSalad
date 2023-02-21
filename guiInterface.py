@@ -48,4 +48,8 @@ for item in items:
         item_quantity = item + " " + str(items[item]) + "x"
         text = Text(receipt_box, text=item_quantity)
 
+#dispense box
+dispense_box = Box(right_box, width="fill", align="bottom")
+dispense_button = PushButton(dispense_box, text="Dispense", align="right")
+
 app.display()
