@@ -26,7 +26,16 @@ def add():
         texts[item_index].show()
 
 def remove():
+    if(items[item_names[item_index]] > 0):
+        items[item_names[item_index]] = items[item_names[item_index]]-1
+    if(items[item_names[item_index]] == 0):
+        texts[item_index].hide()
+    texts[item_index].value = item_names[item_index] + " " + str(items[item_names[item_index]]) + "x"
     
+def dispense():
+    for i in range(len(item_names)):
+        items[item_names[i]] = 0
+        texts[i].hide()
 
 app = App(title="Customizable Food Dispenser")
 
@@ -43,7 +52,7 @@ item_name = Text(detail_box, text=item_names[item_index])
 add_remove_box = Box(right_box, layout="grid")
 add_button = PushButton(add_remove_box,command= lambda:add(), height="fill", text="Add", grid=[0, 0])
 box_pad = Box(add_remove_box, height="fill", width="20", grid=[1, 0])
-remove_button = PushButton(add_remove_box, height="fill", text="Remove", grid=[2, 0])
+remove_button = PushButton(add_remove_box, command= lambda:remove(), height="fill", text="Remove", grid=[2, 0])
 
 #button group for items
 button = PushButton(buttons_box, command= lambda: button_command(0),
@@ -77,6 +86,6 @@ for item in items:
 
 #dispense box
 dispense_box = Box(right_box, width="fill", align="bottom")
-dispense_button = PushButton(dispense_box, text="Dispense", align="right")
+dispense_button = PushButton(dispense_box, command= lambda:dispense(),text="Dispense", align="right")
 
 app.display()
