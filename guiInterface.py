@@ -43,11 +43,18 @@ def edit():
 def back():
     manager_view.hide()
 
+def back_pw():
+    password_view.hide()
+
 def change():
     password_view.show(wait=True)
 
 def input(pin, number):
     pin += number
+
+def confirm():
+    password_view.hide()
+    manager_view.hide()
 
 app = App(title="Customizable Food Dispenser")
 
@@ -115,6 +122,13 @@ button8 = PushButton(numpad_box, command=lambda: input(pin, "8"), text="8", grid
 button9 = PushButton(numpad_box, command=lambda: input(pin, "9"), text="9", grid=[2, 3])
 button0 = PushButton(numpad_box, command=lambda: input(pin, "0"), text="0", grid=[1, 4])
 button_clear = PushButton(numpad_box, command=lambda: clear_input(), text="clear", grid=[3,4])
+
+#back and confirm buttons in password view
+buttons_box = Box(password_view, layout="grid", align="bottom")
+back_button = PushButton(buttons_box, command=lambda: back_pw(), text="Back", grid=[0,0])
+box_pad = Box(buttons_box, height="fill", width="50", grid=[1, 0])
+box_pad = Box(buttons_box, height="fill", width="50", grid=[2, 0])
+confirm_button = PushButton(buttons_box, command=lambda: confirm(), text="Confirm", grid=[3, 0])
 
 #Make map with item names as keys and quantity as values starting from 0
 items = make_map(item_names)
