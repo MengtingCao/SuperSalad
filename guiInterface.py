@@ -4,14 +4,19 @@ item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black", "white"]
 global item_index
 item_index = 0
+global dispenser_index
+dispenser_index = 0
 
 texts = []
 
 def button_command(index):
-    global item_index
     item_index = index
-    item_name.value = item_names[item_index]
+    item_name.value = "Selected: " + item_names[item_index]
 
+def dispenser_select(index):
+    dispenser_index = index
+    item_dispenser_map.value = "Dispensor " + str(dispenser_index+1)
+    curr_name.value = "Current Item: " + item_names[dispenser_index]
 
 def make_map(list):
     items = {}
@@ -38,7 +43,7 @@ def dispense():
         texts[i].hide()
 
 def edit():
-    manager_view.show(wait=True)
+    password_view.show(wait=True)
 
 def back():
     manager_view.hide()
@@ -47,58 +52,65 @@ def back_pw():
     password_view.hide()
 
 def change():
-    password_view.show(wait=True)
+    manager_view.hide()
 
 def input(pin, number):
     pin += number
 
 def confirm():
     password_view.hide()
-    manager_view.hide()
+    manager_view.show(wait=True)
 
 app = App(title="Customizable Food Dispenser")
+
+#Make map with item names as keys and quantity as values starting from 0
+items = make_map(item_names)
 
 #manager view window
 manager_view = Window(app, title="Change Dispensers")
 manager_view.hide()
 dispenser_list = Box(manager_view, align="left", height="fill")
-right_box = Box(manager_view, align="right", height="fill", width="fill")
+right_box_m = Box(manager_view, align="right", height="fill", width="fill")
 
 #Display current information and input box for new item name
-item_dispenser_map = Text(right_box, text="Dispensor " + str(item_index+1))
-curr_name = Text(right_box, text="Current Item: " + item_names[item_index])
-input_box = Box(right_box, layout="grid")
+item_dispenser_map = Text(
+    right_box_m, text="Dispensor " + str(dispenser_index+1))
+curr_name = Text(right_box_m, text="Current Item: " +
+                 item_names[dispenser_index])
+input_box = Box(right_box_m, layout="grid")
 edit_item = Text(input_box, text="Edit Item: ", grid=[0, 0])
 edit_item_input = TextBox(input_box, grid=[1, 0], width=20)
 
 #back and change buttons in manager view
-buttons_box = Box(right_box, layout="grid", align="bottom")
-back_button = PushButton(buttons_box, command=lambda: back(), text="Back", grid=[0,0])
-box_pad = Box(buttons_box, height="fill", width="50", grid=[1, 0])
-box_pad = Box(buttons_box, height="fill", width="50", grid=[2, 0])
-change_button = PushButton(buttons_box, command=lambda: change(), text="Change", grid=[3, 0])
+buttons_box_m = Box(right_box_m, layout="grid", align="bottom")
+back_button = PushButton(
+    buttons_box_m, command=lambda: back(), text="Back", grid=[0, 0])
+box_pad = Box(buttons_box_m, height="fill", width="50", grid=[1, 0])
+box_pad = Box(buttons_box_m, height="fill", width="50", grid=[2, 0])
+change_button = PushButton(
+    buttons_box_m, command=lambda: change(), text="Change", grid=[3, 0])
 
 #button group for items
-button = PushButton(dispenser_list, command=lambda: button_command(0),
-                    width="fill", height="fill", text=item_names[0])
-button1 = PushButton(dispenser_list, command=lambda: button_command(1),
-                     width="fill", height="fill", text=item_names[1])
-button2 = PushButton(dispenser_list, command=lambda: button_command(2),
-                     width="fill", height="fill", text=item_names[2])
-button3 = PushButton(dispenser_list, command=lambda: button_command(3),
-                     width="fill", height="fill", text=item_names[3])
-button4 = PushButton(dispenser_list, command=lambda: button_command(4),
-                     width="fill", height="fill", text=item_names[4])
-button5 = PushButton(dispenser_list, command=lambda: button_command(5),
-                     width="fill", height="fill", text=item_names[5])
-button6 = PushButton(dispenser_list, command=lambda: button_command(6),
-                     width="fill", height="fill", text=item_names[6])
-button7 = PushButton(dispenser_list, command=lambda: button_command(7),
-                     width="fill", height="fill", text=item_names[7])
-button8 = PushButton(dispenser_list, command=lambda: button_command(8),
-                     width="fill", height="fill", text=item_names[8])
-button9 = PushButton(dispenser_list, command=lambda: button_command(9),
-                     width="fill", height="fill", text=item_names[9])
+dispensor1 = PushButton(dispenser_list, command=lambda: dispenser_select(0),
+                     width="fill", height="fill", text="Dispenser 1")
+dispensor2 = PushButton(dispenser_list, command=lambda: dispenser_select(1),
+                     width="fill", height="fill", text="Dispenser 2")
+dispensor3 = PushButton(dispenser_list, command=lambda: dispenser_select(2),
+                     width="fill", height="fill", text="Dispenser 3")
+dispensor4 = PushButton(dispenser_list, command=lambda: dispenser_select(3),
+                     width="fill", height="fill", text="Dispenser 4")
+dispensor5 = PushButton(dispenser_list, command=lambda: dispenser_select(4),
+                     width="fill", height="fill", text="Dispenser 5")
+dispensor6 = PushButton(dispenser_list, command=lambda: dispenser_select(5),
+                     width="fill", height="fill", text="Dispenser 6")
+dispensor7 = PushButton(dispenser_list, command=lambda: dispenser_select(6),
+                     width="fill", height="fill", text="Dispenser 7")
+dispensor8 = PushButton(dispenser_list, command=lambda: dispenser_select(7),
+                     width="fill", height="fill", text="Dispenser 8")
+dispensor9 = PushButton(dispenser_list, command=lambda: dispenser_select(8),
+                     width="fill", height="fill", text="Dispenser 9")
+dispensor10 = PushButton(dispenser_list, command=lambda: dispenser_select(9),
+                     width="fill", height="fill", text="Dispenser 10")
 
 password_view = Window(app, title="Password")
 password_view.hide()
@@ -129,9 +141,6 @@ back_button = PushButton(buttons_box, command=lambda: back_pw(), text="Back", gr
 box_pad = Box(buttons_box, height="fill", width="50", grid=[1, 0])
 box_pad = Box(buttons_box, height="fill", width="50", grid=[2, 0])
 confirm_button = PushButton(buttons_box, command=lambda: confirm(), text="Confirm", grid=[3, 0])
-
-#Make map with item names as keys and quantity as values starting from 0
-items = make_map(item_names)
 
 #container format
 buttons_box = Box(app, align="left", height="fill")
