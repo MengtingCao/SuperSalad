@@ -14,7 +14,7 @@ NUM_SERVOS = 10
 class ServoController:
     def __init__(self):
         self._i2c_bus = busio.I2C(SCL, SDA)
-        self._pca = PCA9685(i2c_bus, address=0x40)
+        self._pca = PCA9685(self._i2c_bus, address=0x40)
         self._pca.frequency = 50
     
         self._servos = []
@@ -28,7 +28,7 @@ class ServoController:
 
         self._servos[i].throttle = throttle
     
-def main():
+def sc_main():
     # just some test code
     # start and stop each servo for 1 second
     servoController = ServoController()
@@ -39,4 +39,4 @@ def main():
         sleep(1.0)
 
 if __name__ == '__main__':
-    main()
+    sc_main()
