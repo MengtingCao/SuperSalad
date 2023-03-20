@@ -10,10 +10,12 @@ dispenser_index = 0
 texts = []
 
 def button_command(index):
+    global item_index
     item_index = index
     item_name.value = "Selected: " + item_names[item_index]
 
 def dispenser_select(index):
+    global dispenser_index
     dispenser_index = index
     item_dispenser_map.value = "Dispensor " + str(dispenser_index+1)
     curr_name.value = "Current Item: " + item_names[dispenser_index]
@@ -121,26 +123,13 @@ pin = ""
 
 password_text = Text(password_view, text="Password: ")
 password_input = TextBox(password_view, text=pin, width=20)
-numpad_box = Box(password_view, layout="grid")
-button1 = PushButton(numpad_box, command=lambda: input(pin, "1"), text="1", grid=[0, 1])
-button2 = PushButton(numpad_box, command=lambda: input(pin, "2"), text="2", grid=[1, 1])
-button3 = PushButton(numpad_box, command=lambda: input(pin, "3"), text="3", grid=[2, 1])
-button_back = PushButton(numpad_box, command=lambda: backspace(), text="<=", grid=[3,1])
-button4 = PushButton(numpad_box, command=lambda: input(pin, "4"), text="4", grid=[0, 2])
-button5 = PushButton(numpad_box, command=lambda: input(pin, "5"), text="5", grid=[1, 2])
-button6 = PushButton(numpad_box, command=lambda: input(pin, "6"), text="6", grid=[2, 2])
-button7 = PushButton(numpad_box, command=lambda: input(pin, "7"), text="7", grid=[0, 3])
-button8 = PushButton(numpad_box, command=lambda: input(pin, "8"), text="8", grid=[1, 3])
-button9 = PushButton(numpad_box, command=lambda: input(pin, "9"), text="9", grid=[2, 3])
-button0 = PushButton(numpad_box, command=lambda: input(pin, "0"), text="0", grid=[1, 4])
-button_clear = PushButton(numpad_box, command=lambda: clear_input(), text="clear", grid=[3,4])
 
 #back and confirm buttons in password view
-buttons_box = Box(password_view, layout="grid", align="bottom")
-back_button = PushButton(buttons_box, command=lambda: back_pw(), text="Back", grid=[0,0])
-box_pad = Box(buttons_box, height="fill", width="50", grid=[1, 0])
-box_pad = Box(buttons_box, height="fill", width="50", grid=[2, 0])
-confirm_button = PushButton(buttons_box, command=lambda: confirm(), text="Confirm", grid=[3, 0])
+bot_box = Box(password_view, layout="grid", align="bottom")
+back_button = PushButton(bot_box, command=lambda: back_pw(), text="Back", grid=[0,0])
+box_pad = Box(bot_box, height="fill", width="50", grid=[1, 0])
+box_pad = Box(bot_box, height="fill", width="50", grid=[2, 0])
+confirm_button = PushButton(bot_box, command=lambda: confirm(), text="Confirm", grid=[3, 0])
 
 #container format
 buttons_box = Box(app, align="left", height="fill")
