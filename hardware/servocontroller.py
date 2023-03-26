@@ -19,24 +19,25 @@ class ServoController:
     
         self._servos = []
         for i in range(NUM_SERVOS):
-            self._servos.append(servo.ContinousServo(self._pca.channels[i]))
+            self._servos.append(servo.ContinuousServo(self._pca.channels[i]))
 
     # for FT90 servos, only need to worry about -1.0, 0, 1.0 speeds. Also, we should only have to deal with either -1.0 or 1.0, depending on how the servos are mounted
     def setServoThrottle(self, servoIndex: int, throttle: float):
         assert(servoIndex >= 0 and servoIndex < NUM_SERVOS)
         assert(throttle >= -1.0 and throttle <= 1.0)
 
-        self._servos[i].throttle = throttle
+        self._servos[servoIndex].throttle = throttle
     
 def sc_main():
     # just some test code
     # start and stop each servo for 1 second
     servoController = ServoController()
-    for i in range(NUM_SERVOS):
-        servoController.setServoThrottle(i, 1.0)
-        sleep(1.0)
-        servoController.setServoThrottle(i, 0.0)
-        sleep(1.0)
+    while True:
+        for i in range(1):
+            servoController.setServoThrottle(i, 1.0)
+            sleep(1/16)
+            servoController.setServoThrottle(i, 0)
+            sleep(0.5)
 
 if __name__ == '__main__':
     sc_main()

@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 from hx711 import HX711 # pip3 install 'git+https://github.com/gandalf15/HX711.git#egg=HX711&subdirectory=HX711_Python3'
 
 class WeightSensor:
-    def __init__(self, dout_pin=5, pd_sck_pin=6):
+    def __init__(self, dout_pin=5, pd_sck_pin=6, calibration_factor=1):
         GPIO.setmode(GPIO.BCM)
 
         self._hx711 = HX711(
@@ -12,7 +12,7 @@ class WeightSensor:
             select_channel='A')
 
         # TODO: determine cal factor with a known weight
-        self.calibration_factor = 1 
+        self.calibration_factor = calibration_factor
 
         self._hx711.reset()
         err = self._hx711.zero() # zero the scale to account for weight of plate, etc.
@@ -20,30 +20,28 @@ class WeightSensor:
             raise ValueError('Unable to zero scale')
 
     def getRawMeasurement(self):
-        value = self._hx711.get_raw_data_mean(readings=30)
-        if value:
-            return value
-        else:
-            raise ValueError('Unable to read raw data')
+        value = self._hx711.get_raw_data_mean(readings=10)
+        return value
 
     def getWeight(self):
-        value = self._hx711.get_weight_mean(readings=30)
-        if value:
-            return value
-        else:
-            raise ValueError('Unable to read weight')
+        value = self._hx711.get_weight_mean(readings=10)
+        return value
 
     def calibrate(self, knownWeight):
-        data = self.getRawMeasurement()
+        data = self._hx711.get_data_mean(readings=10)
         self.calibration_factor = data / knownWeight
         self._hx711.set_scale_ratio(self.calibration_factor)
+        return self.calibration_factor
 
 
 def ws_main():
     # just some test code
-    weightSensor = WeightSensor()
+    weightSensor = WeightSensor(calibration_factor=1342.9942528735633)
+    input("Press enter when ready")
+    res = weightSensor.calibrate(174)
+    print(res)
     while(True):
-        print(weightSensor.getRawMeasurement())
+        print(weightSensor.getRawMeasurement(), weightSensor.getWeight())
 
     
 if __name__ == '__main__':
