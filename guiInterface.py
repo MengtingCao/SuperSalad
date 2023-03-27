@@ -9,6 +9,8 @@ global item_index
 item_index = 0
 global dispenser_index
 dispenser_index = 0
+global password
+password = "password"
 
 texts = []
 
@@ -64,8 +66,9 @@ def input(pin, number):
     pin += number
 
 def confirm():
-    password_view.hide()
-    manager_view.show(wait=True)
+    if(password_input.value == password):
+        password_view.hide()
+        manager_view.show(wait=True)
 
 app = App(title="Customizable Food Dispenser")
 
