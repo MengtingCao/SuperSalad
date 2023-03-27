@@ -69,6 +69,10 @@ def confirm():
     if(password_input.value == password):
         password_view.hide()
         manager_view.show(wait=True)
+        password_input.value = ""
+        warning_text.value = ""
+    else:
+        warning_text.value = "Incorrect Password"
 
 app = App(title="Customizable Food Dispenser")
 
@@ -125,11 +129,10 @@ password_view = Window(app, title="Password")
 password_view.hide()
 
 global password_input
-global pin
-pin = ""
 
 password_text = Text(password_view, text="Password: ")
-password_input = TextBox(password_view, text=pin, width=20)
+password_input = TextBox(password_view, width=20)
+warning_text = Text(password_view, text="")
 
 #back and confirm buttons in password view
 bot_box = Box(password_view, layout="grid", align="bottom")
