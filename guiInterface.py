@@ -2,6 +2,9 @@ from guizero import App, Text, Box, PushButton, Window, TextBox
 
 item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black", "white"]
+prices = [0,0,0,0,0,0,0,0,0,0]
+weights = [0,0,0,0,0,0,0,0,0,0]
+callories = [0,0,0,0,0,0,0,0,0,0]
 global item_index
 item_index = 0
 global dispenser_index
@@ -43,6 +46,7 @@ def dispense():
     for i in range(len(item_names)):
         items[item_names[i]] = 0
         texts[i].hide()
+    dispense_view.show()
 
 def edit():
     password_view.show(wait=True)
@@ -173,12 +177,17 @@ for item in items:
         item_quantity = item + " " + str(items[item]) + "x"
         texts.append(Text(receipt_box, text=item_quantity,visible=False))
         
-
 #dispense box
 dispense_box = Box(right_box, layout="grid")
 edit_buton = PushButton(dispense_box, command=lambda: edit(), text="Edit Items", grid=[0, 0])
 box_pad = Box(dispense_box, height="fill", width="50", grid=[1, 0])
 box_pad = Box(dispense_box, height="fill", width="50", grid=[2, 0])
 dispense_button = PushButton(dispense_box, command=lambda: dispense(), text="Dispense", grid=[3, 0])
+
+dispense_view = Window(app, title="Dispensed")
+dispense_view.hide()
+weight = Text(dispense_view, text="Weight: "+str({round(0.00, 2)}))
+price = Text(dispense_view, text="Price: "+str({round(0.00,2)}))
+callories = Text(dispense_view, text="Calories: "+str(0))
 
 app.display()
