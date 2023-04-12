@@ -96,7 +96,6 @@ def confirm():
         warning_text.value = "Incorrect Password"
 
 app = App(title="Customizable Food Dispenser")
-
 #Make map with item names as keys and quantity as values starting from 0
 items = make_map()
 
