@@ -12,6 +12,7 @@ global password
 password = "password"
 global items
 texts = []
+buttons = []
 
 def button_command(index):
     global item_index
@@ -55,8 +56,8 @@ def dispense():
         total_cals += int(calories[i]) * items[item_names[i]]
         items[item_names[i]] = 0
         texts[i].hide()
-    price.value = str(total_price) + "$"
-    callories.value = str(total_cals)
+    price.value = "Total cost: " + str(total_price) + "$"
+    callories.value = "Calories" + str(total_cals)
     dispense_view.show()
 
 def edit():
@@ -80,6 +81,7 @@ def change(name, price, cals):
     if cals != "":
         curr_cals.value = "Current Calories: " + str(cals)
         calories[dispenser_index] = int(cals)
+    buttons[dispenser_index].text = name;
 
 def input(pin, number):
     pin += number
@@ -202,6 +204,7 @@ button8 = PushButton(buttons_box, command= lambda: button_command(8),
                     width="fill", height="fill", text=item_names[8])
 button9 = PushButton(buttons_box, command= lambda: button_command(9),
                     width="fill", height="fill", text=item_names[9])
+buttons = [button,button1,button2,button3,button4,button5,button6,button7,button8,button9]
 
 #receipt box
 receipt_box = Box(right_box, width="fill", height="fill", border=True)
