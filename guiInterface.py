@@ -2,30 +2,34 @@ from guizero import App, Text, Box, PushButton, Window, TextBox
 
 item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black", "white"]
-prices = [0,0,0,0,0,0,0,0,0,0]
-weights = [0,0,0,0,0,0,0,0,0,0]
-callories = [0,0,0,0,0,0,0,0,0,0]
+prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00,0.00]
+calories = [5,7,10,15,0,0,0,0,0,0]
 global item_index
 item_index = 0
 global dispenser_index
 dispenser_index = 0
 global password
 password = "password"
-
+global items
 texts = []
+buttons = []
 
 def button_command(index):
     global item_index
     item_index = index
     item_name.value = "Selected: " + item_names[item_index]
+    item_price.value = "Price: " + str(prices[item_index]) + "$"
+    item_cals.value = "Calories: " + str(calories[item_index])
 
 def dispenser_select(index):
     global dispenser_index
     dispenser_index = index
     item_dispenser_map.value = "Dispensor " + str(dispenser_index+1)
     curr_name.value = "Current Item: " + item_names[dispenser_index]
+    curr_price.value = "Current Price: " + str(prices[dispenser_index]) + "$"
+    curr_cals.value = "Current Caloriess: " + str(calories[dispenser_index])
 
-def make_map(list):
+def make_map():
     items = {}
     for item in item_names:
         items[item] = 0
@@ -45,22 +49,39 @@ def remove():
     texts[item_index].value = item_names[item_index] + " " + str(items[item_names[item_index]]) + "x"
     
 def dispense():
+    total_price = 0.0
+    total_cals = 0
     for i in range(len(item_names)):
+        total_price += float(prices[i]) * items[item_names[i]]
+        total_cals += int(calories[i]) * items[item_names[i]]
         items[item_names[i]] = 0
         texts[i].hide()
+    price.value = "Total cost: " + str(total_price) + "$"
+    callories.value = "Calories" + str(total_cals)
     dispense_view.show()
 
 def edit():
     password_view.show(wait=True)
 
 def back():
+    global items
+    items = make_map()
     manager_view.hide()
 
 def back_pw():
     password_view.hide()
 
-def change():
-    manager_view.hide()
+def change(name, price, cals):
+    if name != "":
+        curr_name.value = "Current Item: " + name
+        item_names[dispenser_index] = name
+    if price != "":
+        curr_price.value = "Current Price: " + str(price) + "$"
+        prices[dispenser_index] = float(price)    
+    if cals != "":
+        curr_cals.value = "Current Calories: " + str(cals)
+        calories[dispenser_index] = int(cals)
+    buttons[dispenser_index].text = name;
 
 def input(pin, number):
     pin += number
@@ -75,9 +96,8 @@ def confirm():
         warning_text.value = "Incorrect Password"
 
 app = App(title="Customizable Food Dispenser")
-
 #Make map with item names as keys and quantity as values starting from 0
-items = make_map(item_names)
+items = make_map()
 
 #manager view window
 manager_view = Window(app, title="Change Dispensers")
@@ -88,11 +108,16 @@ right_box_m = Box(manager_view, align="right", height="fill", width="fill")
 #Display current information and input box for new item name
 item_dispenser_map = Text(
     right_box_m, text="Dispensor " + str(dispenser_index+1))
-curr_name = Text(right_box_m, text="Current Item: " +
-                 item_names[dispenser_index])
+curr_name = Text(right_box_m, text="Current Item: " + item_names[dispenser_index])
+curr_price = Text(right_box_m, text="Current Price: " + str(prices[dispenser_index]) + "$")
+curr_cals = Text(right_box_m, text="Current Caloriess: " + str(calories[dispenser_index]))
 input_box = Box(right_box_m, layout="grid")
 edit_item = Text(input_box, text="Edit Item: ", grid=[0, 0])
 edit_item_input = TextBox(input_box, grid=[1, 0], width=20)
+edit_price = Text(input_box, text="Edit Price: ", grid=[0, 1])
+edit_price_input = TextBox(input_box, grid=[1, 1], width=20)
+edit_cals = Text(input_box, text="Edit Cals: ", grid=[0, 2])
+edit_cals_input = TextBox(input_box, grid=[1, 2], width=20)
 
 #back and change buttons in manager view
 buttons_box_m = Box(right_box_m, layout="grid", align="bottom")
@@ -100,8 +125,9 @@ back_button = PushButton(
     buttons_box_m, command=lambda: back(), text="Back", grid=[0, 0])
 box_pad = Box(buttons_box_m, height="fill", width="50", grid=[1, 0])
 box_pad = Box(buttons_box_m, height="fill", width="50", grid=[2, 0])
+#super scuffed invocation of change to update the current window
 change_button = PushButton(
-    buttons_box_m, command=lambda: change(), text="Change", grid=[3, 0])
+    buttons_box_m, command=lambda: change(edit_item_input.value, edit_price_input.value, edit_cals_input.value), text="Change", grid=[3, 0])
 
 #button group for items
 dispensor1 = PushButton(dispenser_list, command=lambda: dispenser_select(0),
@@ -148,6 +174,8 @@ detail_box = Box(right_box, width="fill")
 
 #item add/remove box i.e. detail box
 item_name = Text(detail_box, text="Selected: " + item_names[item_index])
+item_price = Text(detail_box, text="Price: " + str(prices[item_index]) + "$")
+item_cals = Text(detail_box, text="Calories: " + str(calories[item_index]))
 add_remove_box = Box(right_box, layout="grid")
 add_button = PushButton(add_remove_box,command= lambda:add(), height="fill", text="Add", grid=[0, 0])
 box_pad = Box(add_remove_box, height="fill", width="50", grid=[1, 0])
@@ -175,6 +203,7 @@ button8 = PushButton(buttons_box, command= lambda: button_command(8),
                     width="fill", height="fill", text=item_names[8])
 button9 = PushButton(buttons_box, command= lambda: button_command(9),
                     width="fill", height="fill", text=item_names[9])
+buttons = [button,button1,button2,button3,button4,button5,button6,button7,button8,button9]
 
 #receipt box
 receipt_box = Box(right_box, width="fill", height="fill", border=True)
@@ -190,8 +219,7 @@ box_pad = Box(dispense_box, height="fill", width="50", grid=[1, 0])
 box_pad = Box(dispense_box, height="fill", width="50", grid=[2, 0])
 dispense_button = PushButton(dispense_box, command=lambda: dispense(), text="Dispense", grid=[3, 0])
 
-dispense_view = Window(app, title="Dispensed")
-dispense_view.hide()
+dispense_view = Window(app, title="Dispensed", visible=False)
 weight = Text(dispense_view, text="Weight: "+str({round(0.00, 2)}))
 price = Text(dispense_view, text="Price: "+str({round(0.00,2)}))
 callories = Text(dispense_view, text="Calories: "+str(0))
