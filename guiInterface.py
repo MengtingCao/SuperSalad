@@ -1,5 +1,8 @@
 from guizero import App, Text, Box, PushButton, Window, TextBox
 
+from hardware.servocontroller import ServoController
+from time import sleep
+
 item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black", "white"]
 prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00,0.00]
@@ -13,6 +16,8 @@ password = "password"
 global items
 texts = []
 buttons = []
+
+servoController = ServoController()
 
 def button_command(index):
     global item_index
@@ -54,10 +59,14 @@ def dispense():
     for i in range(len(item_names)):
         total_price += float(prices[i]) * items[item_names[i]]
         total_cals += int(calories[i]) * items[item_names[i]]
+        if items[item_names[i]] > 0:
+            servoController.setServoThrottle(i, 1)
+            sleep((2/16) * items[item_names[i]])
+            servoController.setServoThrottle(i, 0.1)
         items[item_names[i]] = 0
         texts[i].hide()
-    price.value = "Total cost: " + str(total_price) + "$"
-    callories.value = "Calories" + str(total_cals)
+    price.value = "Total Cost: " + str(total_price) + "$"
+    callories.value = "Total Calories: " + str(total_cals)
     dispense_view.show()
 
 def edit():
