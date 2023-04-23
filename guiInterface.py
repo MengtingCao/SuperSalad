@@ -99,7 +99,7 @@ def change(name, price, cals):
 
 
 def minus():
-    if servo_calibrations[dispenser_index] - 1/16 < 0:
+    if servo_calibrations[dispenser_index] - 1/16 <= 0:
         return
     servo_calibrations[dispenser_index] -= 1/16
     curr_calibration.value = servo_calibrations[dispenser_index]
@@ -110,13 +110,9 @@ def plus():
     curr_calibration.value = servo_calibrations[dispenser_index]
 
 def test_calibration():
-    print("testing calibration...")
-    print(dispenser_index)
-    print(servo_calibrations[dispenser_index])
     servoController.setServoThrottle(dispenser_index, 1)
     sleep((servo_calibrations[dispenser_index]))
     servoController.setServoThrottle(dispenser_index, 0.1)
-    print("finished testing...")
 
 def input(pin, number):
     pin += number
