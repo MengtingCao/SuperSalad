@@ -7,7 +7,7 @@ item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black"]
 prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00]
 calories = [5,7,10,15,0,0,0,0,0]
-servo_calibrations = [4/16,2/16,2/16,2/16,2/16,2/16,2/16,2/16,2/16]
+servo_calibrations = [1/16,2/16,3/16,4/16,5/16,6/16,7/16,8/16,9/16]
 global item_index
 item_index = 0
 global dispenser_index
@@ -34,6 +34,7 @@ def dispenser_select(index):
     curr_name.value = "Current Item: " + item_names[dispenser_index]
     curr_price.value = "Current Price: " + str(prices[dispenser_index]) + "$"
     curr_cals.value = "Current Caloriess: " + str(calories[dispenser_index])
+    curr_calibration.value = servo_calibrations[dispenser_index]
 
 def make_map():
     items = {}
@@ -96,6 +97,27 @@ def change(name, price, cals):
         edit_cals_input.value = ""
     buttons[dispenser_index].text = name;
 
+
+def minus():
+    if servo_calibrations[dispenser_index] - 1/16 < 0:
+        return
+    servo_calibrations[dispenser_index] -= 1/16
+    curr_calibration.value = servo_calibrations[dispenser_index]
+    
+
+def plus():
+    servo_calibrations[dispenser_index] += 1/16
+    curr_calibration.value = servo_calibrations[dispenser_index]
+
+def test_calibration():
+    print("testing calibration...")
+    print(dispenser_index)
+    print(servo_calibrations[dispenser_index])
+    servoController.setServoThrottle(dispenser_index, 1)
+    sleep((servo_calibrations[dispenser_index]) * items[item_names[dispenser_index]])
+    servoController.setServoThrottle(dispenser_index, 0.1)
+    print("finished testing...")
+
 def input(pin, number):
     pin += number
 
@@ -107,6 +129,8 @@ def confirm():
         warning_text.value = ""
     else:
         warning_text.value = "Incorrect Password"
+        
+
 
 app = App(title="Customizable Food Dispenser")
 #Make map with item names as keys and quantity as values starting from 0
@@ -131,6 +155,14 @@ edit_price = Text(input_box, text="Edit Price: ", grid=[0, 1])
 edit_price_input = TextBox(input_box, grid=[1, 1], width=20)
 edit_cals = Text(input_box, text="Edit Cals: ", grid=[0, 2])
 edit_cals_input = TextBox(input_box, grid=[1, 2], width=20)
+
+#calibration
+calibrate_title = Text(right_box_m, text="calibration")
+calibrate_box = Box(right_box_m, layout="grid", align="top")
+minus_button = PushButton(calibrate_box, command=lambda: minus(), text="-", grid=[0,0])
+curr_calibration = Text(calibrate_box, text=servo_calibrations[dispenser_index], grid=[1,0])
+plus_button = PushButton(calibrate_box, command=lambda: plus(), text="+", grid=[2,0])
+test_button = PushButton(right_box_m, command=lambda: test_calibration(), text="test calibration")
 
 #back and change buttons in manager view
 buttons_box_m = Box(right_box_m, layout="grid", align="bottom")
@@ -232,5 +264,6 @@ dispense_view = Window(app, title="Dispensed", visible=False)
 weight = Text(dispense_view, text="Weight: "+str({round(0.00, 2)}))
 price = Text(dispense_view, text="Price: "+str({round(0.00,2)}))
 callories = Text(dispense_view, text="Calories: "+str(0))
+
 
 app.display()
