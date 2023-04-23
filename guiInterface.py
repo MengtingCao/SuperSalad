@@ -4,9 +4,10 @@ from hardware.servocontroller import ServoController
 from time import sleep
 
 item_names = ["green", "red", "purple", "brown",
-              "yellow", "blue", "pink", "orange", "black", "white"]
-prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00,0.00]
-calories = [5,7,10,15,0,0,0,0,0,0]
+              "yellow", "blue", "pink", "orange", "black"]
+prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00]
+calories = [5,7,10,15,0,0,0,0,0]
+servo_calibrations = [4/16,2/16,2/16,2/16,2/16,2/16,2/16,2/16,2/16]
 global item_index
 item_index = 0
 global dispenser_index
@@ -61,7 +62,7 @@ def dispense():
         total_cals += int(calories[i]) * items[item_names[i]]
         if items[item_names[i]] > 0:
             servoController.setServoThrottle(i, 1)
-            sleep((2/16) * items[item_names[i]])
+            sleep((servo_calibrations[i]) * items[item_names[i]])
             servoController.setServoThrottle(i, 0.1)
         items[item_names[i]] = 0
         texts[i].hide()
@@ -84,12 +85,15 @@ def change(name, price, cals):
     if name != "":
         curr_name.value = "Current Item: " + name
         item_names[dispenser_index] = name
+        edit_item_input.value = ""
     if price != "":
         curr_price.value = "Current Price: " + str(price) + "$"
-        prices[dispenser_index] = float(price)    
+        prices[dispenser_index] = float(price)
+        edit_price_input.value = ""
     if cals != "":
         curr_cals.value = "Current Calories: " + str(cals)
         calories[dispenser_index] = int(cals)
+        edit_cals_input.value = ""
     buttons[dispenser_index].text = name;
 
 def input(pin, number):
@@ -157,8 +161,6 @@ dispensor8 = PushButton(dispenser_list, command=lambda: dispenser_select(7),
                      width="fill", height="fill", text="Dispenser 8")
 dispensor9 = PushButton(dispenser_list, command=lambda: dispenser_select(8),
                      width="fill", height="fill", text="Dispenser 9")
-dispensor10 = PushButton(dispenser_list, command=lambda: dispenser_select(9),
-                     width="fill", height="fill", text="Dispenser 10")
 
 password_view = Window(app, title="Password")
 password_view.hide()
@@ -210,9 +212,7 @@ button7 = PushButton(buttons_box, command= lambda: button_command(7),
                     width="fill", height="fill", text=item_names[7])
 button8 = PushButton(buttons_box, command= lambda: button_command(8),
                     width="fill", height="fill", text=item_names[8])
-button9 = PushButton(buttons_box, command= lambda: button_command(9),
-                    width="fill", height="fill", text=item_names[9])
-buttons = [button,button1,button2,button3,button4,button5,button6,button7,button8,button9]
+buttons = [button,button1,button2,button3,button4,button5,button6,button7,button8]
 
 #receipt box
 receipt_box = Box(right_box, width="fill", height="fill", border=True)
