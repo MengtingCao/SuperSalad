@@ -114,7 +114,7 @@ def test_calibration():
     print(dispenser_index)
     print(servo_calibrations[dispenser_index])
     servoController.setServoThrottle(dispenser_index, 1)
-    sleep((servo_calibrations[dispenser_index]) * items[item_names[dispenser_index]])
+    sleep((servo_calibrations[dispenser_index]))
     servoController.setServoThrottle(dispenser_index, 0.1)
     print("finished testing...")
 
