@@ -7,7 +7,9 @@ item_names = ["green", "red", "purple", "brown",
               "yellow", "blue", "pink", "orange", "black"]
 prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00]
 calories = [5,7,10,15,0,0,0,0,0]
-servo_calibrations = [1/16,2/16,3/16,4/16,5/16,6/16,7/16,8/16,9/16]
+servo_calibrations = [1/16,3/16,3/16,4/16,5/16,6/16,7/16,8/16,9/16]
+servoToggleStates = [1] * 9
+print(servoToggleStates)
 global item_index
 item_index = 0
 global dispenser_index
@@ -58,13 +60,17 @@ def remove():
 def dispense():
     total_price = 0.0
     total_cals = 0
+    global servoToggleStates
     for i in range(len(item_names)):
         total_price += float(prices[i]) * items[item_names[i]]
         total_cals += int(calories[i]) * items[item_names[i]]
         if items[item_names[i]] > 0:
-            servoController.setServoThrottle(i, 1)
-            sleep((servo_calibrations[i]) * items[item_names[i]])
-            servoController.setServoThrottle(i, 0.1)
+            for j in range(items[item_names[i]]):
+                servoController.setServoThrottle(i, 1 * servoToggleStates[i])
+                sleep((servo_calibrations[i]))
+                servoController.setServoThrottle(i, 0.0)
+                sleep(1/16)
+                servoToggleStates[i] *= -1
         items[item_names[i]] = 0
         texts[i].hide()
     price.value = "Total Cost: " + str(total_price) + "$"
@@ -112,7 +118,7 @@ def plus():
 def test_calibration():
     servoController.setServoThrottle(dispenser_index, 1)
     sleep((servo_calibrations[dispenser_index]))
-    servoController.setServoThrottle(dispenser_index, 0.1)
+    servoController.setServoThrottle(dispenser_index, None)
 
 def input(pin, number):
     pin += number

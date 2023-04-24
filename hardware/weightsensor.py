@@ -20,17 +20,18 @@ class WeightSensor:
             raise ValueError('Unable to zero scale')
 
     def getRawMeasurement(self):
-        value = self._hx711.get_raw_data_mean(readings=10)
+        value = self._hx711.get_raw_data_mean(readings=30)
         return value
 
     def getWeight(self):
-        value = self._hx711.get_weight_mean(readings=10)
+        value = self._hx711.get_weight_mean(readings=30)
         return value
 
     def calibrate(self, knownWeight):
         data = self._hx711.get_data_mean(readings=10)
         self.calibration_factor = data / knownWeight
         self._hx711.set_scale_ratio(self.calibration_factor)
+        print(self.calibration_factor)
         return self.calibration_factor
 
 
@@ -38,8 +39,10 @@ def ws_main():
     # just some test code
     weightSensor = WeightSensor(calibration_factor=1342.9942528735633)
     input("Press enter when ready")
-    res = weightSensor.calibrate(174)
+    res = weightSensor.calibrate(251)
     print(res)
+    input("remove weight")
+    weightSensor._hx711.zero()
     while(True):
         print(weightSensor.getRawMeasurement(), weightSensor.getWeight())
 
