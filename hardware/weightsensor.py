@@ -4,6 +4,7 @@ from hx711 import HX711 # pip3 install 'git+https://github.com/gandalf15/HX711.g
 class WeightSensor:
     def __init__(self, dout_pin=5, pd_sck_pin=6, calibration_factor=1):
         GPIO.setmode(GPIO.BCM)
+        print(calibration_factor)
 
         self._hx711 = HX711(
             dout_pin=dout_pin, 
