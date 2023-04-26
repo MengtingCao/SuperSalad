@@ -29,7 +29,7 @@ class WeightSensor:
         return value
 
     def calibrate(self, knownWeight):
-        data = self._hx711.get_data_mean(readings=10)
+        data = self._hx711.get_data_mean(readings=30)
         self.calibration_factor = data / knownWeight
         self._hx711.set_scale_ratio(self.calibration_factor)
         print(self.calibration_factor)
@@ -39,8 +39,8 @@ class WeightSensor:
 def ws_main():
     # just some test code
     weightSensor = WeightSensor(calibration_factor=1342.9942528735633)
-    input("Press enter when ready")
-    res = weightSensor.calibrate(251)
+    calWeight = float(input("Enter cal weight and add weight: "))
+    res = weightSensor.calibrate(calWeight)
     print(res)
     input("remove weight")
     weightSensor._hx711.zero()

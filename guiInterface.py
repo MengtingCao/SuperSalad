@@ -4,10 +4,10 @@ from hardware.servocontroller import ServoController
 from time import sleep
 import RPi.GPIO as GPIO
 from hx711 import HX711
-item_names = ["1", "2", "3", "4",
-              "5", "6", "7", "8", "9"]
-prices = [1.00,1.15,1.45,2.00,0.00,0.00,0.00,0.00,0.00]
-calories = [5,7,10,15,0,0,0,0,0]
+item_names = ["M&M's", "2", "Spicy Peanuts", "4",
+              "5", "6", "7", "Skittles", "Jellybeans"]
+prices = [1.00,1.15,1.45,2.00,1.00,1.10,1.20,1.30,1.40]
+calories = [5,7,10,15,10,10,12,13,10]
 servo_calibrations = [5/16] * 9
 servo_speeds = [1] * 9
 servoToggleStates = [1] * 9
@@ -40,7 +40,7 @@ def dispenser_select(index):
     dispenser_index = index
     item_dispenser_map.value = "Dispensor " + str(dispenser_index+1)
     curr_name.value = "Current Item: " + item_names[dispenser_index]
-    curr_price.value = "Current Price: " + str(prices[dispenser_index]) + "$"
+    curr_price.value = "Current Price: " + "$" + str(round(prices[dispenser_index], 2))
     curr_cals.value = "Current Caloriess: " + str(calories[dispenser_index])
     curr_calibration.value = servo_calibrations[dispenser_index]
 
@@ -86,8 +86,8 @@ def dispense():
     ratio = weight2 - weight
     print("After reading " + str(weight2))
     print("Difference " + str(ratio) + "\n")
-    price.value = "Total Cost: " + str(total_price) + "$"
-    callories.value = "Total Calories: " + str(total_cals)
+    price.value = "Total Cost: " + "$" + str(round(total_price, 2))
+    callories.value = "Total Calories: " + str(round(total_cals))
     dispense_view.show()
 
 def edit():
@@ -105,13 +105,19 @@ def back_dp():
     dispense_view.hide()
 
 def change(name, price, cals):
+    global items
     if name != "":
-        curr_name.value = "Current Item: " + name
-        item_names[dispenser_index] = name
-        edit_item_input.value = ""
-        buttons[dispenser_index].text = name;
+        if name in items:
+            # error key already exists
+            manager_view.warn("Rename Error", "Item name already exists! Please choose a different name.")
+        else:   
+            items[name] = items.pop(item_names[dispenser_index]) # rename the key in the items dictionary
+            curr_name.value = "Current Item: " + name
+            item_names[dispenser_index] = name
+            edit_item_input.value = ""
+            buttons[dispenser_index].text = name
     if price != "":
-        curr_price.value = "Current Price: " + str(price) + "$"
+        curr_price.value = "Current Price: " + "$" + str(round(price,2))
         prices[dispenser_index] = float(price)
         edit_price_input.value = ""
     if cals != "":
@@ -157,11 +163,13 @@ def confirm():
         
 
 app = App(title="Customizable Food Dispenser")
+app.set_full_screen()
 #Make map with item names as keys and quantity as values starting from 0
 items = make_map()
 
 #manager view window
 manager_view = Window(app, title="Change Dispensers")
+manager_view.set_full_screen()
 manager_view.hide()
 dispenser_list = Box(manager_view, align="left", height="fill")
 right_box_m = Box(manager_view, align="right", height="fill", width="fill")
@@ -170,7 +178,7 @@ right_box_m = Box(manager_view, align="right", height="fill", width="fill")
 item_dispenser_map = Text(
     right_box_m, text="Dispensor " + str(dispenser_index+1))
 curr_name = Text(right_box_m, text="Current Item: " + item_names[dispenser_index])
-curr_price = Text(right_box_m, text="Current Price: " + str(prices[dispenser_index]) + "$")
+curr_price = Text(right_box_m, text="Current Price: " + "$" + str(round(prices[dispenser_index], 2)))
 curr_cals = Text(right_box_m, text="Current Caloriess: " + str(calories[dispenser_index]))
 input_box = Box(right_box_m, layout="grid")
 edit_item = Text(input_box, text="Edit Item: ", grid=[0, 0])
@@ -224,6 +232,7 @@ dispensor9 = PushButton(dispenser_list, command=lambda: dispenser_select(8),
                      width="fill", height="fill", text="Dispenser 9")
 
 password_view = Window(app, title="Password")
+password_view.set_full_screen()
 password_view.hide()
 
 global password_input
@@ -246,7 +255,7 @@ detail_box = Box(right_box, width="fill")
 
 #item add/remove box i.e. detail box
 item_name = Text(detail_box, text="Selected: " + item_names[item_index])
-item_price = Text(detail_box, text="Price: " + str(prices[item_index]) + "$")
+item_price = Text(detail_box, text="Price: " + "$" + str(round(prices[item_index], 2)))
 item_cals = Text(detail_box, text="Calories: " + str(calories[item_index]))
 add_remove_box = Box(right_box, layout="grid")
 add_button = PushButton(add_remove_box,command= lambda:add(), height="fill", text="Add", grid=[0, 0])
@@ -290,6 +299,7 @@ box_pad = Box(dispense_box, height="fill", width="50", grid=[2, 0])
 dispense_button = PushButton(dispense_box, command=lambda: dispense(), text="Dispense", grid=[3, 0])
 
 dispense_view = Window(app, title="Dispensed", visible=False)
+dispense_view.set_full_screen()
 #weight = Text(dispense_view, text="Weight: "+str({round(0.00, 2)}))
 price = Text(dispense_view, text="Price: "+str({round(0.00,2)}))
 callories = Text(dispense_view, text="Calories: "+str(0))
