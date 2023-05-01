@@ -10,6 +10,28 @@ from adafruit_motor import servo
 
 NUM_SERVOS = 10
 
+class Servo(servo.ContinuousServo):
+
+    @property
+    def throttle(self) -> float:
+        """How much power is being delivered to the motor. Values range from ``-1.0`` (full
+        throttle reverse) to ``1.0`` (full throttle forwards.) ``0`` will stop the motor from
+        spinning."""
+        return self.fraction * 2 - 1
+
+    @throttle.setter
+    def throttle(self, value) -> None:
+        # if value > 1.0 or value < -1.0:
+        #     raise ValueError("Throttle must be between -1.0 and 1.0")
+        # if value is None:
+        #     raise ValueError("Continuous servos cannot spin freely")
+        if value is None:
+            self.fraction = None
+        else:
+            self.fraction = (value + 1) / 2
+    
+    
+
 
 class ServoController:
     def __init__(self):
@@ -19,12 +41,12 @@ class ServoController:
     
         self._servos = []
         for i in range(NUM_SERVOS):
-            self._servos.append(servo.ContinuousServo(self._pca.channels[i]))
+            self._servos.append(Servo(self._pca.channels[i]))
 
     # for FT90 servos, only need to worry about -1.0, 0, 1.0 speeds. Also, we should only have to deal with either -1.0 or 1.0, depending on how the servos are mounted
-    def setServoThrottle(self, servoIndex: int, throttle: float):
-        assert(servoIndex >= 0 and servoIndex < NUM_SERVOS)
-        assert(throttle >= -1.0 and throttle <= 1.0)
+    def setServoThrottle(self, servoIndex: int, throttle):
+        # assert(servoIndex >= 0 and servoIndex < NUM_SERVOS)
+        # assert(throttle >= -1.0 and throttle <= 1.0)
 
         self._servos[servoIndex].throttle = throttle
     
