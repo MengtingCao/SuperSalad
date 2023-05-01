@@ -17,6 +17,7 @@ sudo python3 raspi-blinka.py
 
 ```
 pip3 install adafruit-circuitpython-pca9685
+pip3 install adafruit-circuitpython-servokit
 ```
 
 3. Install HX711 (Weight Sensor)
