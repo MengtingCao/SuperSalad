@@ -1,6 +1,13 @@
 # SuperSalad
 Public facing gui interface git repo for Super Salad group Customizable Food Dispenser
 
+## Software Prerequisites
+1. Install GUIZero
+
+```
+pip3 install guizero
+```
+
 
 ## Hardware Prerequisites
 
