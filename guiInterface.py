@@ -4,11 +4,12 @@ from hardware.servocontroller import ServoController
 from time import sleep
 import RPi.GPIO as GPIO
 from hx711 import HX711
-item_names = ["M&M's", "2", "Spicy Peanuts", "4",
-              "5", "6", "7", "Skittles", "Jellybeans"]
+item_names = ["M&M's", "Mini M&M's", "Spicy Peanuts", "Nerds",
+              "Good & Plenty", "Tropical Jellybeans", "Jellybeans", "Skittles", "Reese's Pieces"]
 prices = [1.00,1.15,1.45,2.00,1.00,1.10,1.20,1.30,1.40]
 calories = [5,7,10,15,10,10,12,13,10]
 servo_calibrations = [5/16] * 9
+servo_calibrations[3-1] = 7/16
 servo_speeds = [1] * 9
 servoToggleStates = [1] * 9
 print(servoToggleStates)
@@ -24,7 +25,8 @@ buttons = []
 GPIO.setmode(GPIO.BCM)
 global hx
 hx = HX711(dout_pin=5, pd_sck_pin=6)
-hx.set_scale_ratio(184.7111111111111)
+# hx.set_scale_ratio(184.7111111111111)
+hx.set_scale_ratio(-218.74285714285713)
 
 servoController = ServoController()
 
@@ -40,7 +42,7 @@ def dispenser_select(index):
     dispenser_index = index
     item_dispenser_map.value = "Dispensor " + str(dispenser_index+1)
     curr_name.value = "Current Item: " + item_names[dispenser_index]
-    curr_price.value = "Current Price: " + "$" + str(round(prices[dispenser_index], 2))
+    curr_price.value = "Current Price: " + "$" + str(prices[dispenser_index])
     curr_cals.value = "Current Caloriess: " + str(calories[dispenser_index])
     curr_calibration.value = servo_calibrations[dispenser_index]
 
@@ -68,8 +70,8 @@ def dispense():
     total_cals = 0
     global servoToggleStates
     global hx
-    weight = hx.get_weight_mean()
-    print("Before reading " + str(weight))
+    # weight = hx.get_weight_mean()
+    # print("Before reading " + str(weight))
     for i in range(len(item_names)):
         total_price += float(prices[i]) * items[item_names[i]]
         total_cals += int(calories[i]) * items[item_names[i]]
@@ -82,10 +84,10 @@ def dispense():
                 servoToggleStates[i] *= -1
         items[item_names[i]] = 0
         texts[i].hide()
-    weight2 = hx.get_weight_mean()
-    ratio = weight2 - weight
-    print("After reading " + str(weight2))
-    print("Difference " + str(ratio) + "\n")
+    # weight2 = hx.get_weight_mean()
+    # ratio = weight2 - weight
+    # print("After reading " + str(weight2))
+    # print("Difference " + str(ratio) + "\n")
     price.value = "Total Cost: " + "$" + str(round(total_price, 2))
     callories.value = "Total Calories: " + str(round(total_cals))
     dispense_view.show()
@@ -117,7 +119,7 @@ def change(name, price, cals):
             edit_item_input.value = ""
             buttons[dispenser_index].text = name
     if price != "":
-        curr_price.value = "Current Price: " + "$" + str(round(price,2))
+        curr_price.value = "Current Price: " + "$" + str(price)
         prices[dispenser_index] = float(price)
         edit_price_input.value = ""
     if cals != "":
@@ -178,7 +180,7 @@ right_box_m = Box(manager_view, align="right", height="fill", width="fill")
 item_dispenser_map = Text(
     right_box_m, text="Dispensor " + str(dispenser_index+1))
 curr_name = Text(right_box_m, text="Current Item: " + item_names[dispenser_index])
-curr_price = Text(right_box_m, text="Current Price: " + "$" + str(round(prices[dispenser_index], 2)))
+curr_price = Text(right_box_m, text="Current Price: " + "$" + str(prices[dispenser_index]))
 curr_cals = Text(right_box_m, text="Current Caloriess: " + str(calories[dispenser_index]))
 input_box = Box(right_box_m, layout="grid")
 edit_item = Text(input_box, text="Edit Item: ", grid=[0, 0])
@@ -195,11 +197,13 @@ box_pad = Box(right_box_m, width="fill", height="10")
 
 #calibration
 calibrate_title = Text(right_box_m, text="calibration")
+spin_length_text = Text(right_box_m, text="spin length")
 calibrate_box = Box(right_box_m, layout="grid", align="top")
 minus_button = PushButton(calibrate_box, command=lambda: minus(servo_calibrations, curr_calibration, 1/16), text="-", grid=[0,0])
 curr_calibration = Text(calibrate_box, text=servo_calibrations[dispenser_index], grid=[1,0])
 plus_button = PushButton(calibrate_box, command=lambda: plus(servo_calibrations, curr_calibration, 1/16), text="+", grid=[2,0])
 
+speed_text = Text(right_box_m, text="spin speed")
 speed_box = Box(right_box_m, layout="grid", align="top")
 sminus_button = PushButton(speed_box, command=lambda: minus(servo_speeds, curr_speed, 0.1), text="-", grid=[0,0])
 curr_speed = Text(speed_box, text=round(servo_speeds[dispenser_index],1), grid=[1,0])
@@ -255,7 +259,7 @@ detail_box = Box(right_box, width="fill")
 
 #item add/remove box i.e. detail box
 item_name = Text(detail_box, text="Selected: " + item_names[item_index])
-item_price = Text(detail_box, text="Price: " + "$" + str(round(prices[item_index], 2)))
+item_price = Text(detail_box, text="Price: " + "$" + str(prices[item_index]))
 item_cals = Text(detail_box, text="Calories: " + str(calories[item_index]))
 add_remove_box = Box(right_box, layout="grid")
 add_button = PushButton(add_remove_box,command= lambda:add(), height="fill", text="Add", grid=[0, 0])
